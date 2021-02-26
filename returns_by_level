@@ -1,0 +1,34 @@
+```SQL
+
+WITH buyings AS (
+    SELECT level_id, SUM(cash) AS purchase_cash
+    FROM (
+        SELECT DISTINCT id, level_id, cash
+        FROM pl
+        WHERE local_time BETWEEN '2020-12-14 00:00:00' AND '2020-12-20 23:59:59'
+        AND operation_id IN (1, 2)
+        )
+    GROUP BY level_id
+    ),
+    returns AS (
+    SELECT level_id, SUM(cash) AS returned_cash
+    FROM (
+        SELECT DISTINCT id, level_id, cash
+        FROM pl
+        WHERE local_time BETWEEN '2020-12-14 00:00:00' AND '2020-12-20 23:59:59'
+        AND operation_id IN (4, 5)
+        AND parent_id IN (
+            SELECT DISTINCT id
+            FROM pl
+            WHERE local_time BETWEEN '2020-12-14 00:00:00' AND '2020-12-20 23:59:59'
+        AND operation_id IN (1, 2)
+                        )
+        )
+    GROUP BY level_id
+    )
+SELECT buyings.*, returns.returned_cash, (buyings.purchase_cash - returns.returned_cash) AS total
+FROM buyings, returns
+WHERE buyings.level_id = returns.level_id
+ORDER BY level_id
+LIMIT 200
+```
