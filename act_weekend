@@ -1,1 +1,12 @@
---basic action results
+--basic action results; make decision about returns
+
+SELECT category3, COUNT(DISTINCT id), COUNT(DISTINCT customer_id), SUM(sku_quantity), SUM(position_cash), SUM(item_discount), SUM(position_add), SUM(position_redeem)
+FROM (
+    SELECT DISTINCT id, order_num, category3, sku, customer_id, sku_quantity, position_cash, discount_id, item_discount, position_add, position_redeem
+    FROM pl
+    WHERE local_time BETWEEN '2020-11-20 00:00:00' AND '2020-11-22 23:59:59'
+    AND operation_id IN (1,2)
+    AND category3 = 1000040318
+    )
+GROUP BY category3
+LIMIT 2580
