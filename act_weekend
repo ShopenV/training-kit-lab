@@ -12,7 +12,7 @@ GROUP BY category3
 
 UNION ALL
 
-SELECT -1.0, COUNT(DISTINCT id), COUNT(DISTINCT customer_id), SUM(sku_quantity), SUM(position_cash), SUM(item_discount), SUM(position_add), SUM(position_redeem)
+SELECT toString('returns'), COUNT(DISTINCT id), COUNT(DISTINCT customer_id), SUM(sku_quantity), SUM(position_cash), SUM(item_discount), SUM(position_add), SUM(position_redeem)
 FROM (
     SELECT DISTINCT id, order_num, category3, sku, customer_id, sku_quantity, position_cash, discount_id, item_discount, position_add, position_redeem
     FROM pl
