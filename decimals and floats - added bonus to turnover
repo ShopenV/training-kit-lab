@@ -1,0 +1,25 @@
+WITH (
+    SELECT SUM( cash )
+        FROM (
+            SELECT DISTINCT id, cash
+                FROM pl
+                WHERE toYear(local_time) = '2019'
+                AND operation_id IN (1, 2)        
+            )
+    ) AS cashes,
+    (
+    SELECT SUM( toDecimal128(cash, 4) )
+        FROM (
+            SELECT DISTINCT id, cash
+                FROM pl
+                WHERE toYear(local_time) = '2019'
+                AND operation_id IN (1, 2) 
+            )
+    ) AS dec_cashes
+SELECT 
+    (SUM(usage_amount * usage_quantity)) / cashes AS floats, 
+    ((SUM(toDecimal128(usage_amount, 4) * toDecimal128(usage_quantity, 4))) / dec_cashes) AS decs, 
+    toDecimal128(((SUM(usage_amount * usage_quantity)) / cashes), 4) - ((SUM(toDecimal128(usage_amount, 4) * toDecimal128(usage_quantity, 4))) / dec_cashes) AS difference
+FROM  pl
+WHERE toYear(local_time) = '2019'
+AND operation_id IN (1, 2) AND usage_operation = 2
